@@ -40,7 +40,6 @@ public class ResourceManagementService {
         }
         Server s = new Server(capacity + "" + Math.random());
         serverRepository.save(s);
-        server.add(s);
         return s;
     }
 

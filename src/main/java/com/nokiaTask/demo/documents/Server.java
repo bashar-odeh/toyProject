@@ -20,9 +20,8 @@ public class Server {
     private List<String> users;
     private boolean isActive = true;
 
-    public Server(String id, double capacity) {
+    public Server(String id) {
         this.id = id;
-        this.capacity = capacity;
         users = new ArrayList<>();
     }
 

@@ -32,7 +32,7 @@ public class ResourceManagementService {
         }
     }
 
-  synchronized  public Server occupyServer(double capacity) throws InterruptedException {
+  synchronized   public Server occupyServer(double capacity) throws InterruptedException {
         for (Server s : server) {
             if (s.getCapacity() >= capacity) {
                 return s;
@@ -40,8 +40,10 @@ public class ResourceManagementService {
         }
         Server s = new Server(capacity + "" + Math.random());
         serverRepository.save(s);
+        server.add(s);
         return s;
     }
+
 
 }
 

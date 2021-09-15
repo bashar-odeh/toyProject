@@ -31,13 +31,10 @@ public class ResourceManagementService {
     public void assignServerToUser(String userId, double capacity) throws InterruptedException {
         Server s = this.occupyServer(capacity);
         synchronized (s) {
-            if (s.getCapacity() < capacity) {
+            if (s.getCapacity() < capacity ||!s.isActive() ) {
                 assignServerToUser(userId, capacity);
                 return;
-            } else if (!s.isActive()) {
-                assignServerToUser(userId, capacity);
-                return;
-            } else {
+            }  else {
                 System.out.println("capacity needs to be occupied " + capacity + " and server with id " + s.getId() + " has : " + s.getCapacity());
                 s.setCapacity(s.getCapacity() - capacity);
                 s.getUsers().add(userId);

@@ -8,7 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+/**
+ * MongoDb document for storing servers data
+ * @author BasharO
+ */
 
 @Document
 @Data
@@ -20,8 +24,9 @@ public class Server {
     private List<String> users;
     private boolean isActive = true;
 
-    public Server(String id) {
+    public Server(String id, double capacity) {
         this.id = id;
+        this.capacity = capacity;
         users = new ArrayList<>();
     }
 

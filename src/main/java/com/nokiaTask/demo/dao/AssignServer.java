@@ -1,4 +1,4 @@
-package com.nokiaTask.demo.services;
+package com.nokiaTask.demo.dao;
 
 import lombok.Data;
 

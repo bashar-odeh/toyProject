@@ -36,7 +36,7 @@ public class ResourceManagementService {
         Server s = this.getServer(capacity);
         synchronized (s) {
             if (isServerAvailbale(s, capacity) == null) {
-               assignServerToUser(userId,capacity);
+                assignServerToUser(userId, capacity);
             }
             server = serverRepository.findAll();
             s.setCapacity(s.getCapacity() - capacity);
@@ -54,12 +54,20 @@ public class ResourceManagementService {
             Server tempServer = isServerAvailbale(s, capacity);
             if (tempServer != null) return tempServer;
         }
-        Thread.sleep(2000);
-        Server s = new Server("" + Math.random(), 100);
-        serverRepository.save(s);
-        return s;
+        return createServer();
     }
 
+    private Server createServer() throws InterruptedException {
+
+        Thread.sleep(2000);
+        Server server = new Server("" + Math.random(), 100);
+        serverRepository.save(server);
+        return server;
+    }
+
+    /**
+     * check whether server is available or not based on capacity and active status
+     */
     private Server isServerAvailbale(Server s, double capacity) {
         if (s.getCapacity() >= capacity && s.isActive()) {
             return s;

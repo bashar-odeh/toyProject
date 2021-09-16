@@ -1,0 +1,6 @@
+com.nokiaTask.demo
+com.nokiaTask.demo.controllers
+com.nokiaTask.demo.dao
+com.nokiaTask.demo.documents
+com.nokiaTask.demo.repositories
+com.nokiaTask.demo.services

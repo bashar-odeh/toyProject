@@ -33,10 +33,10 @@ public class ResourceManagementService {
      * lock on server being used by a user so no user can access it  while it's being processed
      */
     public void assignServerToUser(String userId, double capacity) throws InterruptedException {
-        Server s = getServer(capacity);
+        Server s = this.getServer(capacity);
         synchronized (s) {
             if (isServerAvailbale(s, capacity) == null) {
-                assignServerToUser(userId, capacity);
+               assignServerToUser(userId,capacity);
             }
             server = serverRepository.findAll();
             s.setCapacity(s.getCapacity() - capacity);
@@ -54,23 +54,12 @@ public class ResourceManagementService {
             Server tempServer = isServerAvailbale(s, capacity);
             if (tempServer != null) return tempServer;
         }
-        return createServer();
-    }
-
-    /**
-     * create new server if no server was available
-     */
-    private Server createServer() throws InterruptedException {
-
         Thread.sleep(2000);
-        Server server = new Server("" + Math.random(), 100);
-        serverRepository.save(server);
-        return server;
+        Server s = new Server("" + Math.random(), 100);
+        serverRepository.save(s);
+        return s;
     }
 
-    /**
-     * check whether server is available or not based on capacity and active status
-     */
     private Server isServerAvailbale(Server s, double capacity) {
         if (s.getCapacity() >= capacity && s.isActive()) {
             return s;

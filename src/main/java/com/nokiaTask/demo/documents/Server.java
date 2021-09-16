@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * MongoDb document for storing servers data
+ *
  * @author BasharO
  */
 

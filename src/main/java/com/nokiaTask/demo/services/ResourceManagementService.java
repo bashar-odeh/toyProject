@@ -35,6 +35,10 @@ public class ResourceManagementService {
     public void assignServerToUser(String userId, double capacity) throws InterruptedException {
         Server s = this.getServer(capacity);
         synchronized (s) {
+            if (isServerAvailbale(s, capacity) == null) {
+               assignServerToUser(userId,capacity);
+            }
+            server = serverRepository.findAll();
             s.setCapacity(s.getCapacity() - capacity);
             s.getUsers().add(userId);
             serverRepository.save(s);
@@ -47,14 +51,20 @@ public class ResourceManagementService {
     public Server getServer(double capacity) throws InterruptedException {
         server = serverRepository.findAll();
         for (Server s : server) {
-            if (s.getCapacity() >= capacity && s.isActive()) {
-                return s;
-            }
+            Server tempServer = isServerAvailbale(s, capacity);
+            if (tempServer != null) return tempServer;
         }
         Thread.sleep(2000);
         Server s = new Server("" + Math.random(), 100);
         serverRepository.save(s);
         return s;
+    }
+
+    private Server isServerAvailbale(Server s, double capacity) {
+        if (s.getCapacity() >= capacity && s.isActive()) {
+            return s;
+        }
+        return null;
     }
 
 }

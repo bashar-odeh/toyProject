@@ -5,6 +5,7 @@ import com.nokiaTask.demo.repositories.ServerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Manages user requests synchronously
@@ -16,10 +17,10 @@ public class ResourceManagementService {
 
     private ServerRepository serverRepository;
     /**
-     * store in it  all servers in Database
+     * store in all servers in Database
      */
     static List<Server> server;
-
+    private double maxCapacity = 100;
 
     public ResourceManagementService(ServerRepository serverRepository) {
         this.serverRepository = serverRepository;
@@ -29,13 +30,16 @@ public class ResourceManagementService {
     }
 
     /**
-     * assign server to user and
+     * assign server to user
      * lock on server being used by a user so no user can access it  while it's being processed
      */
     public void assignServerToUser(String userId, double capacity) throws InterruptedException {
+        if(capacity > maxCapacity){
+            return ;
+        }
         Server s = this.getServer(capacity);
-        synchronized (s) {
-            if (isServerAvailbale(s, capacity) == null) {
+        synchronized (s.getId().intern()) {
+            if (isServerAvailbale(s, capacity) == false) {
                 assignServerToUser(userId, capacity);
             }
             server = serverRepository.findAll();
@@ -50,33 +54,41 @@ public class ResourceManagementService {
      */
     public Server getServer(double capacity) throws InterruptedException {
         server = serverRepository.findAll();
-        for (Server s : server) {
-            Server tempServer = isServerAvailbale(s, capacity);
-            if (tempServer != null) return tempServer;
+        Optional<Server> tempServer = server.stream().filter(server1 -> isServerAvailbale(server1, capacity)).findFirst();
+        if (tempServer.isPresent()) {
+            return tempServer.get();
         }
-
         return createServer();
     }
 
     /**
      * make sure that server is available based on capacity and active status
      */
-    private Server isServerAvailbale(Server s, double capacity) throws InterruptedException {
+    private boolean isServerAvailbale(Server s, double capacity) {
         if (s.getCapacity() >= capacity && s.isActive()) {
-            return s;
+            return true;
         }
-        return null;
+        return false;
     }
+
     /**
      * create server
      */
     private Server createServer() throws InterruptedException {
-        Thread.sleep(2000);
         Server s = new Server("" + Math.random(), 100);
         serverRepository.save(s);
         return s;
     }
 
+    /**
+     * Filter servers based on active status and return active list of active server
+     *
+     * @return List<Server>
+     */
+
+    public List<Server> getActiveServers() {
+        return serverRepository.findAllByIsActiveTrue();
+    }
 }
 
 

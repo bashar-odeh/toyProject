@@ -25,8 +25,6 @@ public class ResourceManagementService {
     public ResourceManagementService(ServerRepository serverRepository) {
         this.serverRepository = serverRepository;
         serverRepository.deleteAll();
-        serverRepository.save(new Server(Math.random() + "", 20));
-        serverRepository.save(new Server(Math.random() + "", 20));
     }
 
     /**
@@ -38,6 +36,7 @@ public class ResourceManagementService {
             return;
         }
         Server s = this.getServer(capacity);
+        System.out.println("Server to be occupied" + s.getId() + " From user "+ userId);
         synchronized (s.getId().intern()) {
             if (isServerAvailbale(s, capacity) == false) {
                 assignServerToUser(userId, capacity);
@@ -79,7 +78,6 @@ public class ResourceManagementService {
      * @return Server
      */
     private Server createServer() throws InterruptedException {
-        Thread.sleep(2000);
         Server s = new Server("" + Math.random(), 100);
         serverRepository.save(s);
         return s;

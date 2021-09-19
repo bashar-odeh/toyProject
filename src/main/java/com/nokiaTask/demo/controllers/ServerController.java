@@ -19,10 +19,6 @@ public class ServerController {
      *
      * @author BasharO
      */
-//    @PostMapping("/assignServer")
-//    public void assignServer(@RequestBody AssignServer assignServer) throws InterruptedException {
-//        resourceManagementService.assignServerToUser(assignServer.getUserId(), assignServer.getCapacity());
-//    }
     @PostMapping("/assign")
     public void assignServer(@RequestBody List<AssignServer> assignServers) throws InterruptedException {
         assignServers

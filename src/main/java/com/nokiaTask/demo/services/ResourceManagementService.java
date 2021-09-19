@@ -34,8 +34,8 @@ public class ResourceManagementService {
      * lock on server being used by a user so no user can access it  while it's being processed
      */
     public void assignServerToUser(String userId, double capacity) throws InterruptedException {
-        if(capacity > maxCapacity){
-            return ;
+        if (capacity > maxCapacity) {
+            return;
         }
         Server s = this.getServer(capacity);
         synchronized (s.getId().intern()) {

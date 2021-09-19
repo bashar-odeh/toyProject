@@ -79,7 +79,6 @@ public class ResourceManagementService {
      * @return Server
      */
     private Server createServer() throws InterruptedException {
-        Thread.sleep(2000);
         Server s = new Server("" + Math.random(), 100);
         serverRepository.save(s);
         return s;

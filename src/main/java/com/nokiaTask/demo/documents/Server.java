@@ -23,11 +23,12 @@ public class Server {
     private String id;
     private double capacity = 100;
     private List<String> users;
-    private boolean isActive = true;
+    private String status ;
 
-    public Server(String id, double capacity) {
+    public Server(String id, double capacity,String status) {
         this.id = id;
         this.capacity = capacity;
+        this.status = status;
         users = new ArrayList<>();
     }
 

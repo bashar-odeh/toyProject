@@ -31,8 +31,9 @@ public class ServerController {
                 });
     }
 
-    @GetMapping("/active")
-    public List<Server> getActiveServers() {
-        return resourceManagementService.getActiveServers();
+    @GetMapping("/{status}")
+    public List<Server> getActiveServers(@PathVariable String status) {
+        System.out.println(status);
+        return resourceManagementService.getActiveServers(status);
     }
 }

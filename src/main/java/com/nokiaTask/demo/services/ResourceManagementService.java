@@ -17,10 +17,15 @@ public class ResourceManagementService {
 
     private ServerRepository serverRepository;
     /**
-     * store in all servers in Database
+     * store in all active servers in Database
      */
     static List<Server> server;
+    /**
+     * store in all being created servers in Database
+     */
+    static List<Server> serverCreating;
     private double maxCapacity = 100;
+    private static Object serverIsBeingCreated = new Object();
 
     public ResourceManagementService(ServerRepository serverRepository) {
         this.serverRepository = serverRepository;
@@ -35,25 +40,26 @@ public class ResourceManagementService {
         if (capacity > maxCapacity) {
             return;
         }
-        Server s = this.getServer(capacity);
-        System.out.println("Server to be occupied" + s.getId() + " From user "+ userId);
-        synchronized (s.getId().intern()) {
+        synchronized (this) {
+            Server s = this.getServer(capacity);
             if (isServerAvailbale(s, capacity) == false) {
                 assignServerToUser(userId, capacity);
+                return;
             }
-            server = serverRepository.findAll();
             s.setCapacity(s.getCapacity() - capacity);
             s.getUsers().add(userId);
             serverRepository.save(s);
+            server = serverRepository.findAll();
         }
     }
 
     /**
      * get available server for user if no server  then create one
+     *
      * @return Server
      */
     public Server getServer(double capacity) throws InterruptedException {
-        server = serverRepository.findAll();
+        server = serverRepository.findServerByStatus("active");
         Optional<Server> tempServer = server.stream().filter(server1 -> isServerAvailbale(server1, capacity)).findFirst();
         if (tempServer.isPresent()) {
             return tempServer.get();
@@ -63,10 +69,11 @@ public class ResourceManagementService {
 
     /**
      * make sure that server is available based on capacity and active status
-     * @return  Boolean
+     *
+     * @return Boolean
      */
     private boolean isServerAvailbale(Server s, double capacity) {
-        if (s.getCapacity() >= capacity && s.isActive()) {
+        if (s.getCapacity() >= capacity && s.getStatus().equalsIgnoreCase("active")) {
             return true;
         }
         return false;
@@ -78,7 +85,9 @@ public class ResourceManagementService {
      * @return Server
      */
     private Server createServer() throws InterruptedException {
-        Server s = new Server("" + Math.random(), 100);
+        Thread.sleep(2000);
+        Server s = new Server("" + Math.random(), 100, "creating");
+        s.setStatus("active");
         serverRepository.save(s);
         return s;
     }
@@ -88,9 +97,8 @@ public class ResourceManagementService {
      *
      * @return List<Server>
      */
-
-    public List<Server> getActiveServers() {
-        return serverRepository.findAllByIsActiveTrue();
+    public List<Server> getActiveServers(String status) {
+        return serverRepository.findServerByStatus(status);
     }
 }
 
